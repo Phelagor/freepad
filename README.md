@@ -75,3 +75,18 @@ mosquitto_pub -t "zigbee2mqtt/FN/BUTTON_NUM/set/switch_actions" -m '1'
 ```bash
 mosquitto_pub -t "zigbee2mqtt/FN/BUTTON_NUM/set/switch_actions" -m '2'
 ```
+
+
+## How to compile
+
+Since the Project is based on the ZStack sample project, and this one comes with IAR project files,
+you need IAR to compile the project.
+
+1. Install ZStack (used 3.0.2)
+2. Navigate to ```<ZSTACK_DIR>\Projects\zstack\HomeAutomation```
+3. Checkout the project into that directory
+4. Open ```<CHECKOUT_DIR>CC2530DB\GenericApp.eww``` with IAR (Project file)
+5. Switch Poject Configuration via ```Project -> Edit Configurations...``` to ```DIYRuZ_FreePad_TL_PM3``` (with Touchlink and PowerManagement 3 (PM3???))
+6. Execute ```Project -> Rebuild All```
+
+Firmware file is located at ```<CHECKOUT_DIR>\firmwares```
