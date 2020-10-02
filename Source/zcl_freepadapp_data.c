@@ -91,9 +91,10 @@ CONST zclAttrRec_t zclFreePadApp_Attrs[][FREEPAD_ATTRS_COUNT] = {
 
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[1]}},
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[1]}}},
+     
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[2]}},
-
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[2]}}},
+     
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[3]}},
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[3]}}},
 
@@ -195,50 +196,73 @@ void zclFreePadApp_InitClusters(void) {
 byte zclFreePadApp_KeyCodeToButton(byte key) {
     switch (key) {
 #if defined(HAL_BOARD_FREEPAD)
-    case 0x9: // row=4 col=4
-        return 1;
-    case 0xa: // row=4 col=8
-        return 2;
-    case 0xc: // row=4 col=16
-        return 3;
-    case 0x8: // row=4 col=32
-        return 4;
-    case 0x11: // row=8 col=4
-        return 5;
-    case 0x12: // row=8 col=8
-        return 6;
-    case 0x14: // row=8 col=16
-        return 7;
-    case 0x18: // row=8 col=32
-        return 8;
-    case 0x21: // row=16 col=4
-        return 9;
-    case 0x22: // row=16 col=8
-        return 10;
-    case 0x24: // row=16 col=16
-        return 11;
-    case 0x28: // row=16 col=32
-        return 12;
-    case 0x41: // row=32 col=4
-        return 13;
-    case 0x42: // row=32 col=8
-        return 14;
-    case 0x44: // row=32 col=16
-        return 15;
-    case 0x48: // row=32 col=32
-        return 16;
-    case 0x81: // row=64 col=4
-        return 17;
-    case 0x82: // row=64 col=8
-        return 18;
-    case 0x84: // row=64 col=16
-        return 19;
-    case 0x88: // row=64 col=32
-        return 20;
+    /* ######################## Button 1 ########################
+            row: 0000.0010
+            col: 0000.0100
+            key: 0001.0010
+    ########################################################### */
+    case 0x12:
+            return 1;
+
+    /* ######################## Button 2 ########################
+            row: 0000.0010
+            col: 0000.1000
+            key: 0001.0011
+    ########################################################### */
+    case 0x13:
+            return 2;
+
+    /* ######################## Button 3 ########################
+            row: 0000.0010
+            col: 0001.0000
+            key: 0001.0100
+    ########################################################### */
+    case 0x14:
+            return 3;
+
+    /* ######################## Button 4 ########################
+            row: 0000.0010
+            col: 0010.0000
+            key: 0001.0101
+    ########################################################### */
+    case 0x15:
+            return 4;
+
+    /* ######################## Button 5 ########################
+            row: 0000.0100
+            col: 0000.0100
+            key: 0010.0010
+    ########################################################### */
+    case 0x22:
+            return 5;
+
+    /* ######################## Button 6 ########################
+            row: 0000.0100
+            col: 0000.1000
+            key: 0010.0011
+    ########################################################### */
+    case 0x23:
+            return 6;
+
+    /* ######################## Button 7 ########################
+            row: 0000.0100
+            col: 0001.0000
+            key: 0010.0100
+    ########################################################### */
+    case 0x24:
+            return 7;
+
+    /* ######################## Button 8 ########################
+            row: 0000.0100
+            col: 0010.0000
+            key: 0010.0101
+    ########################################################### */
+    case 0x25:
+            return 8;
 #elif defined(HAL_BOARD_CHDTECH_DEV)
-    case 0x1: // row=4 col=4
+    case 0x1: // row=0000.0100 col=0000.0100
         return 1;
-    case 0x2: // row=4 col=8
+    case 0x2: // row=0000.0100 col=0000.1000
         return 2;
 #endif
 
@@ -250,6 +274,7 @@ byte zclFreePadApp_KeyCodeToButton(byte key) {
 
 void zclFreePadApp_ResetAttributesToDefaultValues(void) {
     for (uint8 i = 0; i < FREEPAD_BUTTONS_COUNT; i++) {
+      //set keys to buttons (toggle)
         zclFreePadApp_SwitchActions[i] = ON_OFF_SWITCH_ACTIONS_TOGGLE;
         zclFreePadApp_SwitchTypes[i] = ON_OFF_SWITCH_TYPE_MULTIFUNCTION;
     }

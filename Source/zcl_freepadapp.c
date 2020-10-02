@@ -136,7 +136,7 @@ void zclFreePadApp_Init(byte task_id) {
     RegisterForKeys(zclFreePadApp_TaskID);
 
     LREP("Started build %s \r\n", zclFreePadApp_DateCodeNT);
-    ZMacSetTransmitPower(TX_PWR_PLUS_4); // set 4dBm
+    ZMacSetTransmitPower(TX_PWR_PLUS_1); // set 1dBm (might need to increase, but atm should be short range)
 }
 
 static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool isRelease) {
@@ -157,7 +157,10 @@ static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool is
         zclGeneral_SendOnOff_CmdToggle(endPoint, &inderect_DstAddr, TRUE, bdb_getZCLFrameCounter());
         break;
     }
-
+    
+    // here happens the 'binding' (#terminology?) of the buttons to the ZCL commands
+    // every even number is the 'up' button, to the corresponding odd number 'down' button in the matrix
+    // the commands are always bound to endpoints with index of 'down' button (odd)
     if (button % 2 == 0) {
         // even numbers (2 4, send up to lower odd number)
         zclGeneral_SendLevelControlStepWithOnOff(endPoint - 1, &inderect_DstAddr, LEVEL_STEP_UP, FREEPADAPP_LEVEL_STEP_SIZE,
@@ -182,7 +185,10 @@ static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool is
         // works zclLighting_ColorControl_Send_MoveToColorCmd( endPoint, &inderect_DstAddr, 11298, 48942, 0, TRUE,
         // bdb_getZCLFrameCounter());
     }
-
+    
+    // 2020 09 30: for better testing those buttons should stay LEVEL_STEP_UP buttons
+    // so uncomment this later maybe
+    /*
     if (button % 4 == 1) {
         zclLighting_ColorControl_Send_StepColorCmd(endPoint, &inderect_DstAddr, FREEPADAPP_COLOR_LEVEL_STEP_X_SIZE,
                                                    FREEPADAPP_COLOR_LEVEL_STEP_Y_SIZE, FREEPADAPP_COLOR_LEVEL_TRANSITION_TIME, true,
@@ -200,6 +206,7 @@ static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool is
                                                    FREEPADAPP_COLOR_LEVEL_STEP_Y_SIZE, FREEPADAPP_COLOR_LEVEL_TRANSITION_TIME, true,
                                                    bdb_getZCLFrameCounter());
     }
+    */
 }
 
 static void zclFreePadApp_SendKeys(byte keyCode, byte pressCount, bool isRelease) {

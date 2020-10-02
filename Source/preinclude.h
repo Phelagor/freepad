@@ -55,7 +55,7 @@
 #ifndef INT_HEAP_LEN
     #define INT_HEAP_LEN 3000
 #endif
-#define FREEPAD_BUTTONS_COUNT 20
+#define FREEPAD_BUTTONS_COUNT 8
 
 #if defined(HAL_BOARD_FREEPAD)
     #define POWER_SAVING
