@@ -38,7 +38,7 @@
 #if defined(HAL_BOARD_FREEPAD)
 #define HAL_KEY_P0_GPIO_PINS (HAL_KEY_BIT2 | HAL_KEY_BIT3 | HAL_KEY_BIT4 | HAL_KEY_BIT5)
 #define HAL_KEY_P0_INPUT_PINS (HAL_KEY_BIT2 | HAL_KEY_BIT3 | HAL_KEY_BIT4 | HAL_KEY_BIT5)
-#define HAL_KEY_P0_INTERRUPT_PINS HAL_KEY_P0_INPUT_PINS
+#define HAL_KEY_P0_INTERRUPT_PINS (HAL_KEY_P0_INPUT_PINS)
 
 #define HAL_KEY_P1_GPIO_PINS (HAL_KEY_BIT1 | HAL_KEY_BIT2)
 #define HAL_KEY_P1_INPUT_PINS (HAL_KEY_BIT1 | HAL_KEY_BIT2)
@@ -151,9 +151,9 @@ uint8 HalKeyRead(void) {
     row = P0 & HAL_KEY_P0_INPUT_PINS;
 
     if (row) {
-        // row is 0x8, 0x10, 0x20, 0x40 or , 0x80 depending on row that is pressed
+        // We got an interrupt from a row pin
         // Now find out which col it was by changing row IO's to input and driving
-        // the col IO's as O/P.
+        // the col IO's as Outpt.
         col = 0;
         // set pull downs on col pins
 
