@@ -112,7 +112,9 @@ CONST zclAttrRec_t zclFreePadApp_Attrs[][FREEPAD_ATTRS_COUNT] = {
 
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[8]}},
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[8]}}},
-
+      
+     // Yep, this needs some fixing to be more adaptable. But for now it's commented out.
+/*
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[9]}},
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[9]}}},
 
@@ -145,6 +147,7 @@ CONST zclAttrRec_t zclFreePadApp_Attrs[][FREEPAD_ATTRS_COUNT] = {
 
     {{SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_TYPE, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchTypes[19]}},
      {SWITCH_CONFIG, {ATTRID_ON_OFF_SWITCH_ACTIONS, ZCL_DATATYPE_ENUM8, RW, (void *)&zclFreePadApp_SwitchActions[19]}}}
+*/
 
 };
 uint8 CONST zclFreePadApp_AttrsFirstEPCount = (sizeof(zclFreePadApp_AttrsFirstEP) / sizeof(zclFreePadApp_AttrsFirstEP[0]));

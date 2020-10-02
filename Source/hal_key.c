@@ -30,8 +30,8 @@
 #define HAL_KEY_BIT6 0x40
 #define HAL_KEY_BIT7 0x80
 
-#define HAL_KEY_RISING_EDGE 1
-#define HAL_KEY_FALLING_EDGE 0
+#define HAL_KEY_RISING_EDGE 0
+#define HAL_KEY_FALLING_EDGE 1
 
 #define HAL_KEY_DEBOUNCE_VALUE 25 // TODO: adjust this value
 
