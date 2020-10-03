@@ -136,7 +136,7 @@ void zclFreePadApp_Init(byte task_id) {
     RegisterForKeys(zclFreePadApp_TaskID);
 
     LREP("Started build %s \r\n", zclFreePadApp_DateCodeNT);
-    ZMacSetTransmitPower(TX_PWR_PLUS_1); // set 1dBm (might need to increase, but atm should be short range)
+    ZMacSetTransmitPower(TX_PWR_PLUS_4); // set 1dBm (might need to increase, but atm should be short range)
 }
 
 static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool isRelease) {
