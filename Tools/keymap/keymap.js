@@ -10,8 +10,8 @@ Set the pins which are used in row_bits and col_bits.
 Run this scrip in a console (like node keymap.js) and take the result for C Keymap
 
 */
-const row_bits = [1,2]
-const col_bits = [2,3,4,5]
+const row_bits = [2,3,4,5]
+const col_bits = [1,2]
 
 fs = require('fs');
 
