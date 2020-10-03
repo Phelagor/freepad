@@ -30,23 +30,51 @@
 #define HAL_KEY_BIT6 0x40
 #define HAL_KEY_BIT7 0x80
 
-#define HAL_KEY_RISING_EDGE 0
-#define HAL_KEY_FALLING_EDGE 1
+#define HAL_KEY_RISING_EDGE 0x00
+#define HAL_KEY_FALLING_EDGE 0x01
+
+//P0.0 ... P0.7
+#define HAL_KEY_P0_INTERRUPT_CONFIG 0x00
+//P1.0 ... P1.3
+#define HAL_KEY_P1L_INTERRUPT_CONFIG 0x01
+//P1.4 ... P1.7
+#define HAL_KEY_P1H_INTERRUPT_CONFIG 0x02
+//P2.0 ... P0.4
+#define HAL_KEY_P2_INTERRUPT_CONFIG 0x03
+
+// IEN1 bit 5
+#define HAL_KEY_P0_INTERRUPT_ENABLE_BIT 0x05
+// IEN2 bit 4
+#define HAL_KEY_P1_INTERRUPT_ENABLE_BIT 0x04
+// IEN2 bit 1
+#define HAL_KEY_P2_INTERRUPT_ENABLE_BIT 0x01
+
+#define HAL_KEY_PULL_UP 0x00
+#define HAL_KEY_PULL_DOWN 0x1
+
+// Set input mode: Pull or 3-state
+#define HAL_KEY_PULL_MODE(INPUT_REG, INPUT_PINS) ((INPUT_REG)&(~(INPUT_PINS)))
+#define HAL_KEY_3_STATE_MODE(INPUT_REG, INPUT_PINS) ((INPUT_REG)|(INPUT_PINS))
+
+// Set Pull-up or Pull-down at P2INP
+#define HAL_KEY_P0_PULL_SELECTION_BIT 0x05
+#define HAL_KEY_P1_PULL_SELECTION_BIT 0x06
+#define HAL_KEY_P2_PULL_SELECTION_BIT 0x07
 
 #define HAL_KEY_DEBOUNCE_VALUE 25 // TODO: adjust this value
 
 #if defined(HAL_BOARD_FREEPAD)
 #define HAL_KEY_P0_GPIO_PINS (HAL_KEY_BIT2 | HAL_KEY_BIT3 | HAL_KEY_BIT4 | HAL_KEY_BIT5)
 #define HAL_KEY_P0_INPUT_PINS (HAL_KEY_BIT2 | HAL_KEY_BIT3 | HAL_KEY_BIT4 | HAL_KEY_BIT5)
-#define HAL_KEY_P0_INTERRUPT_PINS (HAL_KEY_P0_INPUT_PINS)
+#define HAL_KEY_P0_INTERRUPT_PINS (HAL_KEY_NONE)
 
 #define HAL_KEY_P1_GPIO_PINS (HAL_KEY_BIT1 | HAL_KEY_BIT2)
 #define HAL_KEY_P1_INPUT_PINS (HAL_KEY_BIT1 | HAL_KEY_BIT2)
-#define HAL_KEY_P1_INTERRUPT_PINS (HAL_KEY_NONE)
+#define HAL_KEY_P1_INTERRUPT_PINS (HAL_KEY_P1_INPUT_PINS)
 
-#define HAL_KEY_P2_GPIO_PINS (HAL_KEY_BIT4)
-#define HAL_KEY_P2_INPUT_PINS (HAL_KEY_BIT4)
-#define HAL_KEY_P2_INTERRUPT_PINS (HAL_KEY_BIT4)
+#define HAL_KEY_P2_GPIO_PINS (HAL_KEY_NONE)
+#define HAL_KEY_P2_INPUT_PINS (HAL_KEY_NONE)
+#define HAL_KEY_P2_INTERRUPT_PINS (HAL_KEY_NONE)
 
 #elif defined(HAL_BOARD_CHDTECH_DEV)
 #define HAL_KEY_P0_GPIO_PINS (HAL_KEY_BIT1)
@@ -84,29 +112,21 @@ static uint8 halKeyTimerRunning; // Set to true while polling timer is running i
 void halProcessKeyInterrupt(void);
 
 void HalInitColumns(void) {
-    /**
-     * columns (p1)
-    **/
-
-    P1DIR |= HAL_KEY_P1_INPUT_PINS; // set as output
-    P1 |= HAL_KEY_P1_INPUT_PINS;    // set high
-    P1INP |= HAL_KEY_P1_INPUT_PINS; // set tri state (set to 1)
+    // columns
+    P1DIR &= ~HAL_KEY_P1_INPUT_PINS; // set input
+    P1INP = HAL_KEY_PULL_MODE(P1INP, HAL_KEY_P1_INPUT_PINS); // set pull mode 
+    P2INP |= (HAL_KEY_PULL_DOWN << HAL_KEY_P1_PULL_SELECTION_BIT); // set pull-down 
 }
 
 void HalInitRows(void) {
-    /**
-     * row pins
-     **/
-
-    P0DIR &= ~HAL_KEY_P0_INPUT_PINS; // set input
-    P0INP &= ~HAL_KEY_P0_INPUT_PINS; // pull pins (set to 0)
-    
-    // To define if pull up or pull down for the 
-    // ports HAL_KEY_BIT5 = P0, HAL_KEY_BIT6 = P1
-    P2INP |= HAL_KEY_BIT5;           // pull down port0  
+    // row pins
+    P0DIR |= HAL_KEY_P0_INPUT_PINS; // set as output
+    P0 |= HAL_KEY_P0_INPUT_PINS;    // set output high
+    P0INP = HAL_KEY_3_STATE_MODE(P0INP, HAL_KEY_P0_INPUT_PINS); // set tri state
 }
 
 void HalKeyInit(void) {
+    // Mode selection (GPIO:0 or Peripheral:1)
     P0SEL &= ~HAL_KEY_P0_GPIO_PINS;
     P1SEL &= ~HAL_KEY_P1_GPIO_PINS;
     P2SEL &= ~HAL_KEY_P2_GPIO_PINS;
@@ -129,17 +149,23 @@ void HalKeyInit(void) {
 void HalKeyConfig(bool interruptEnable, halKeyCBack_t cback) {
     Hal_KeyIntEnable = true;
     pHalKeyProcessFunction = cback;
+    // Interrupt enable mask
     P0IEN |= HAL_KEY_P0_INTERRUPT_PINS;
     P1IEN |= HAL_KEY_P1_INTERRUPT_PINS;
     P2IEN |= HAL_KEY_P2_INTERRUPT_PINS;
 #if defined(HAL_BOARD_FREEPAD)
-    PICTL &= ~HAL_KEY_BIT0; // set rising edge on port 0
-                            // enable intrupt on row pins
-    IEN1 |= HAL_KEY_BIT5;   // enable port0 int
+    // set rising edge intrpt trigger on port 1.0...3
+    PICTL &= (HAL_KEY_RISING_EDGE << HAL_KEY_P1L_INTERRUPT_CONFIG);
+    // enable port1 intrpt
+    IEN2 |= 1 << HAL_KEY_P1_INTERRUPT_ENABLE_BIT;   
 #elif defined(HAL_BOARD_CHDTECH_DEV)
-    PICTL |= HAL_KEY_BIT0 | HAL_KEY_BIT3; // set falling edge on port 0 and 2
-    IEN1 |= HAL_KEY_BIT5;                 // enable port0 int
-    IEN2 |= HAL_KEY_BIT1;                 // enable port2 int
+    // set falling edge on port 0 and 2
+    PICTL |= (HAL_KEY_FALLING_EDGE << HAL_KEY_P0_INTERRUPT_CONFIG \
+          | HAL_KEY_FALLING_EDGE << HAL_KEY_P2_INTERRUPT_CONFIG);
+    // enable port0 intrpt
+    IEN1 |= (1 << HAL_KEY_P0_INTERRUPT_ENABLE_BIT);
+    // enable port2 intrpt
+    IEN2 |= (1 << HAL_KEY_P2_INTERRUPT_ENABLE_BIT);
 
 #endif
 }
@@ -148,29 +174,26 @@ uint8 HalKeyRead(void) {
     uint8 key = HAL_KEY_CODE_NOKEY;
 #if defined(HAL_BOARD_FREEPAD)
     uint8 row, col;
-    row = P0 & HAL_KEY_P0_INPUT_PINS;
+    col = P1 & HAL_KEY_P1_INPUT_PINS;
 
-    if (row) {
-        // We got an interrupt from a row pin
-        // Now find out which col it was by changing row IO's to input and driving
-        // the col IO's as Outpt.
-        col = 0;
-        // set pull downs on col pins
-
-        // P1 &= ~HAL_KEY_P1_INPUT_PINS;
-        P1DIR &= ~HAL_KEY_P1_INPUT_PINS; // set p1 as input
-        P1INP &= ~HAL_KEY_P1_INPUT_PINS; // set as pull pins
-        P2INP |= HAL_KEY_BIT6;           // pull down port1
-
-        // P1 &= ~HAL_KEY_P1_INPUT_PINS; //set low on p1 pins
-
-        P0INP |= HAL_KEY_P0_INPUT_PINS; // set as tri state
-        P0DIR |= HAL_KEY_P0_INPUT_PINS; // set p0 as output
-        P0 |= HAL_KEY_P0_INPUT_PINS;    // set high on p0
+    if (col) {
+        // We got an interrupt from a col pin
+        // Now find out which col it was by changing col IO's to input 
+        // and driving the row IO's as Outpt.
+        row = 0;
+        // reconfigure rows as input
+        P0DIR &= ~HAL_KEY_P0_INPUT_PINS; // set p1 as input
+        P0INP = HAL_KEY_PULL_MODE(P0INP, HAL_KEY_P0_INPUT_PINS); // set pull mode 
+        P2INP |= (HAL_KEY_PULL_DOWN << HAL_KEY_P0_PULL_SELECTION_BIT); // set pull-down 
+    
+        // reconfigure col as output
+        P1DIR |= HAL_KEY_P1_INPUT_PINS; // set as output
+        P1 |= HAL_KEY_P1_INPUT_PINS;    // set output high
+        P1INP = HAL_KEY_3_STATE_MODE(P1INP, HAL_KEY_P1_INPUT_PINS); // set tri state
 
         HAL_BOARD_DELAY_USEC(50);
 
-        col = P1 & HAL_KEY_P1_INPUT_PINS;
+        row = P0 & HAL_KEY_P0_INPUT_PINS;
 
         // Reset Ports for new Key Press
         HalInitRows();
@@ -183,17 +206,17 @@ uint8 HalKeyRead(void) {
         // Rows
         uint8 result = (row > 0xF) << 2; row >>= result;    
         uint8 shift = (row > 0x3 ) << 1;
-        uint8 val = (result|shift|(row >> (shift+1)))<<4;
+        uint8 key = (result|shift|(row >> (shift+1)))<<4;
         
         // Columns
         result = (col > 0xF) << 2; col >>= result;
         shift = (col > 0x3 ) << 1;
-        val |= result|shift|(row >> (shift+1));
+        key |= result|shift|(row >> (shift+1));
         
-        return val;
-                   
+        LREP("row %d col %d key 0x%X %d \r\n", row, col, key, key);
+        return key;              
     }
-    // LREP("row %d col %d key 0x%X %d \r\n", row, col, key, key);
+
 #elif defined(HAL_BOARD_CHDTECH_DEV)
 
     if (ACTIVE_LOW(P0 & HAL_KEY_P0_INPUT_PINS)) {
