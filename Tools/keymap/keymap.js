@@ -54,9 +54,9 @@ _determine_bits_position = (input) => {
     //Since we only check unsigned byte, pow 4 is max
 
     //Checking if in upper nibble (pow 4) and shifting to lower one (max pow 3)
-    var result = (input > 0xF) << 2; input >>= result;
+    var result = (input > 0x0F) << 2; input >>= result;
     //If it's below 3 (0011) we only have two options left (10 or 01) and can add them directly (|)
-    var shift = (input > 0x3 ) << 1;
+    var shift = (input > 0x03 ) << 1;
     return result|shift|(input >> (shift+1));
 }
 

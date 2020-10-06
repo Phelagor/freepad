@@ -196,8 +196,8 @@ void zclFreePadApp_InitClusters(void) {
     }
 }
 
-byte zclFreePadApp_KeyCodeToButton(byte key) {
-    switch (key) {
+byte zclFreePadApp_KeyCodeToButton(byte switch_key) {
+    switch (switch_key) {
 #if defined(HAL_BOARD_FREEPAD)
     /* ######################## Button 1 ########################
             row: 0000.0100

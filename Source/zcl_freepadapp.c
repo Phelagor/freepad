@@ -186,9 +186,6 @@ static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool is
         // bdb_getZCLFrameCounter());
     }
     
-    // 2020 09 30: for better testing those buttons should stay LEVEL_STEP_UP buttons
-    // so uncomment this later maybe
-    /*
     if (button % 4 == 1) {
         zclLighting_ColorControl_Send_StepColorCmd(endPoint, &inderect_DstAddr, FREEPADAPP_COLOR_LEVEL_STEP_X_SIZE,
                                                    FREEPADAPP_COLOR_LEVEL_STEP_Y_SIZE, FREEPADAPP_COLOR_LEVEL_TRANSITION_TIME, true,
@@ -206,7 +203,6 @@ static void zclFreepadApp_SendKeysToBinds(byte keyCode, byte pressCount, bool is
                                                    FREEPADAPP_COLOR_LEVEL_STEP_Y_SIZE, FREEPADAPP_COLOR_LEVEL_TRANSITION_TIME, true,
                                                    bdb_getZCLFrameCounter());
     }
-    */
 }
 
 static void zclFreePadApp_SendKeys(byte keyCode, byte pressCount, bool isRelease) {
@@ -298,7 +294,7 @@ static void zclFreePadApp_SendButtonPress(uint8 endPoint, uint8 clicksCount) {
 
 static void zclFreePadApp_HandleKeys(byte shift, byte keyCode) {
     static uint32 pressTime = 0;
-    static byte prevKeyCode = 0;
+    static byte prevKeyCode = 0x00;
     if (keyCode == prevKeyCode) {
         return;
     }

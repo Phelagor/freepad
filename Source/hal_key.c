@@ -147,15 +147,16 @@ extern void HalKeyInit(void) {
     P1SEL &= 0x00;
     P2SEL &= 0x00;
     
-    HAL_KEY_INIT_COLUMNS();
-    HAL_KEY_INIT_ROWS();
-    
     HAL_BOARD_DELAY_USEC(50); 
     pHalKeyProcessFunction = NULL;
     halKeyTimerRunning = FALSE;
 }
 
 void HalKeyConfig(bool interruptEnable, halKeyCBack_t cback) {
+  
+    HAL_KEY_INIT_COLUMNS();
+    HAL_KEY_INIT_ROWS();
+    
     Hal_KeyIntEnable = true;
     pHalKeyProcessFunction = cback;
     
@@ -206,18 +207,16 @@ uint8 HalKeyRead(void) {
         
         // high nibble = row, low nibble = col
         // generate keymap with included javascript (keymap.js)
-        
         // Rows
-        uint8 result = (row > 0xF) << 2; row >>= result;    
-        uint8 shift = (row > 0x3 ) << 1;
-        uint8 key = (result|shift|(row >> (shift+1)))<<4;
+        uint8 result = (row > 0x0F) << 2; row >>= result;    
+        uint8 shift = (row > 0x03 ) << 1;
+        key = (result|shift|(row >> (shift+1))) <<4;
         
         // Columns
-        result = (col > 0xF) << 2; col >>= result;
-        shift = (col > 0x3 ) << 1;
-        key |= result|shift|(row >> (shift+1));
+        result = (col > 0x0F) << 2; col >>= result;
+        shift = (col > 0x03 ) << 1;
+        key |= (result|shift|(col >> (shift+1)));
         
-        return key;              
     }
 
 #elif defined(HAL_BOARD_CHDTECH_DEV)
@@ -230,8 +229,9 @@ uint8 HalKeyRead(void) {
         key = 0x02;
     }
 #endif
-
+    
     return key;
+
 }
 void HalKeyPoll(void) {
     uint8 keys = 0;
@@ -270,6 +270,7 @@ void HalKeyEnterSleep(void) {
 }
 
 uint8 HalKeyExitSleep(void) {
+  return false;
     uint8 clkcmd = CLKCONCMD;
     // Switch to 16MHz before setting the DC/DC to on to reduce risk of flash corruption
     CLKCONCMD = (CLKCONCMD_16MHZ | OSC_32KHZ);
