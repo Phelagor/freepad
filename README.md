@@ -1,5 +1,5 @@
 # zig-hrc0303
-# *Work in progress*
+## *Work in progress*
 
 This gonna be new firmware to flash the HRC0303 to join any zigbee network.
 
@@ -8,9 +8,12 @@ This gonna be new firmware to flash the HRC0303 to join any zigbee network.
 - Add LED support
 - Add missing Buttons (Wheel / Reset)
 - Check for deprecated stuff and remove
+- ...
 
 ## What works?
+Most of the stuff only works reliable on dev-board atm (https://github.com/Phelagor/freepad/commit/2e1df556b2612ef830faeb1edb7d0fb659d03a57)
 - Button matrix get registered (Fav 1&1, Sat+/-, Ilu+/-, On, Off)
+  - definitely needs debouncing on product
 
 
 ## Features list:
@@ -22,12 +25,7 @@ This gonna be new firmware to flash the HRC0303 to join any zigbee network.
 4. Level control bind
 5. Bindings configuration
 6. Remote reset
-
-
-## How to add device into zigbe2mqtt
-*Currently is registered as freepad #2e1df55*
-
-Should be already in dev branch (as of 19-05-2020)
+7. Integrates into zigbee2mqtt (*as freepad atm*)
 
 
 ## How to compile
