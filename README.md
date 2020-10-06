@@ -1,9 +1,21 @@
-# Freepad
+# zig-hrc0303
+# *Work in progress*
 
-Freepad is an open source Zigbee remote intended to be used to have a customizable keypad to control your smart home devices.  
-Read more here: https://modkam.ru/?p=1264
+This gonna be new firmware to flash the HRC0303 to join any zigbee network.
+
+## TO-DO
+- Debounce buttons on product
+- Add LED support
+- Add missing Buttons (Wheel / Reset)
+- Check for deprecated stuff and remove
+
+## What works?
+- Button matrix get registered (Fav 1&1, Sat+/-, Ilu+/-, On, Off)
+
 
 ## Features list:
+*maybe some of those features still work?*
+
 1. Single/double/tripple/quadriple/many_x/hold&release
 2. Touchlink reset
 3. ONOFF bind
@@ -12,26 +24,39 @@ Read more here: https://modkam.ru/?p=1264
 6. Remote reset
 
 
+## How to add device into zigbe2mqtt
+*Currently is registered as freepad #2e1df55*
+
+Should be already in dev branch (as of 19-05-2020)
+
+
+## How to compile
+
+Since the Project is based on the ZStack sample project, and this one comes with IAR project files,
+you need IAR to compile the project.
+
+1. Install ZStack (used 3.0.2)
+2. Navigate to ```<ZSTACK_DIR>\Projects\zstack\HomeAutomation```
+3. Clone the project into that directory
+4. Open ```<CLONE_DIR>\CC2530DB\GenericApp.eww``` with IAR (Project file)
+5. Switch Poject Configuration via ```Project -> Edit Configurations...``` to ```DIYRuZ_FreePad_TL_PM3``` (with Touchlink and PowerManagement 3 (PM3???))
+6. Execute ```Project -> Rebuild All```
+
+Firmware file is located at ```<CLONE_DIR>\firmwares```
+
+-----------------------------------------------------------
+
+*Old stuff*
+
 ## How to join:
 
 1. Press and hold *any* button for 3-10 seconds(depends whter or not device is on a network), until device start flashing led
 2. Wait, in case of successfull join, device will flash led 5 times
-3. If join failed, device will flash led 3 times
-
-## How to use touch link
- Deprecated due to memory issues, you can use `FREEPAD_ENABLE_TL` macros if you want to compile with TL functionality
-
-
-## What's button mapping?
-![Here](./images/zigbee_keypad22.png)
-
-## How to add device into zigbe2mqtt
-Should be already in dev branch (as of 19-05-2020)
-
+3. If join failed, device will flash led 3 times 
 
 
 ## Work modes
-By default remote works as custom swith, with multiple clicks, this behaiviout has own drawback.
+By default remote works as custom switch, with multiple clicks, this behaiviout has own drawback.
 In order to detect multiple clicks, remote sends commands with 300ms delay.
 You can change this behaviour by cost of double/tripple/etc clicks. 
 To do that you need to change
@@ -76,17 +101,3 @@ mosquitto_pub -t "zigbee2mqtt/FN/BUTTON_NUM/set/switch_actions" -m '1'
 mosquitto_pub -t "zigbee2mqtt/FN/BUTTON_NUM/set/switch_actions" -m '2'
 ```
 
-
-## How to compile
-
-Since the Project is based on the ZStack sample project, and this one comes with IAR project files,
-you need IAR to compile the project.
-
-1. Install ZStack (used 3.0.2)
-2. Navigate to ```<ZSTACK_DIR>\Projects\zstack\HomeAutomation```
-3. Clone the project into that directory
-4. Open ```<CLONE_DIR>\CC2530DB\GenericApp.eww``` with IAR (Project file)
-5. Switch Poject Configuration via ```Project -> Edit Configurations...``` to ```DIYRuZ_FreePad_TL_PM3``` (with Touchlink and PowerManagement 3 (PM3???))
-6. Execute ```Project -> Rebuild All```
-
-Firmware file is located at ```<CLONE_DIR>\firmwares```
