@@ -38,7 +38,6 @@
 
 #define HAL_LED FALSE
 #define HAL_LCD FALSE
-#define BLINK_LEDS FALSE
 
 // one of this boards
 // #define HAL_BOARD_FREEPAD
