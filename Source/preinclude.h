@@ -36,9 +36,9 @@
 #define ISR_KEYINTERRUPT
 #define HAL_BUZZER FALSE
 
-#define HAL_LED TRUE
+#define HAL_LED FALSE
 #define HAL_LCD FALSE
-#define BLINK_LEDS TRUE
+#define BLINK_LEDS FALSE
 
 // one of this boards
 // #define HAL_BOARD_FREEPAD

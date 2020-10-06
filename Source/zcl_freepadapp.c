@@ -62,7 +62,7 @@ byte zclFreePadApp_TaskID;
  */
 
 bool holdSend = false;
-byte currentKeyCode = 0;
+byte currentKeyCode = 0x00;
 byte clicksCount = 0;
 
 afAddrType_t inderect_DstAddr = {.addrMode = (afAddrMode_t)AddrNotPresent, .endPoint = 0, .addr.shortAddr = 0};
@@ -254,7 +254,7 @@ uint16 zclFreePadApp_event_loop(uint8 task_id, uint16 events) {
         LREPMaster("FREEPADAPP_SEND_KEYS_EVT\r\n");
         zclFreePadApp_SendKeys(currentKeyCode, clicksCount, holdSend);
         clicksCount = 0;
-        currentKeyCode = 0;
+        currentKeyCode = 0x00;
         holdSend = false;
         return (events ^ FREEPADAPP_SEND_KEYS_EVT);
     }

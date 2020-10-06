@@ -33,7 +33,7 @@
  *                                         Key Release detect support
  * ------------------------------------------------------------------------------------------------
  */
-#define HAL_KEY_CODE_NOKEY 0xff
+#define HAL_KEY_CODE_NOKEY 0xFF
 
 
 /* ------------------------------------------------------------------------------------------------
@@ -110,13 +110,15 @@
  */
 
 /* ----------- RF-frontend Connection Initialization ---------- */
+/*
 #if defined HAL_PA_LNA || defined HAL_PA_LNA_CC2590
 extern void MAC_RfFrontendSetup(void);
 #define HAL_BOARD_RF_FRONTEND_SETUP() MAC_RfFrontendSetup()
 #else
 #define HAL_BOARD_RF_FRONTEND_SETUP()
-#endif
+#endif*/
 
+#define HAL_BOARD_RF_FRONTEND_SETUP()
 
 /* ------------------------------------------------------------------------------------------------
  *                                            Macros
@@ -162,10 +164,10 @@ extern void MAC_RfFrontendSetup(void);
 /* ----------- LED's ---------- */
 
 #if defined(HAL_BOARD_FREEPAD)
-  #define LED1_BV           BV(1)
-  #define LED1_SBIT         P0_1
-  #define LED1_DDR          P0DIR
-  #define LED1_POLARITY     ACTIVE_HIGH
+  #define LED1_BV           BV(0)
+  #define LED1_SBIT         P2_4
+  #define LED1_DDR          P1DIR
+  #define LED1_POLARITY     ACTIVE_LOW
 #elif defined(HAL_BOARD_CHDTECH_DEV)
 /* 1 - P1_0 Зеленый */
   #define LED1_BV           BV(0)
